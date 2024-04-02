@@ -11,6 +11,7 @@ namespace Jogo_De_Adivinhacao_ConsoleApp
             Console.WriteLine("Jogo de adivinhação | Academia de Programação 2024!\n");
             iniciaJogo();
         }
+        // (numero chutado – numero aleatório) / 2 formula do erro
 
         private static void iniciaJogo()
         {
@@ -19,7 +20,7 @@ namespace Jogo_De_Adivinhacao_ConsoleApp
             int numero = 0;
             int pontuacao = 1000;
             int[] numeros = new int[30];
-
+            Console.WriteLine("\t\t\t* Seja bem-vindo(a) ao jogo de Adivinhação! *");
             seletorDeDificuldade(ref chances);
             int adivinhar = geradorDeNumeroAleatorio(ref numeros, ref numero);
             escolhaDoNumero(adivinhar, numeros, ref numeroChutado, ref pontuacao, ref chances);
@@ -34,20 +35,63 @@ namespace Jogo_De_Adivinhacao_ConsoleApp
                 placar(adivinhar, ref pontuacao, ref chances);
                 numeroChutado = valor<int>($"Digite um número entre < 0 à {numeros.Length} >: ");
 
-                if (numeroChutado == adivinhar)
+                if( numeroChutado > numeros.Length)
                 {
-                    Console.WriteLine("\t\t\t\tACERTOU!\n\t\tTU É BRABO MENÓ!");
-                    replayGame();
-
+                    Console.WriteLine($"O número deve estar entre < 0 e {numeros.Length} >, por favor tente novamente.");
+                    valor<string>("ENTER para continuar!");
+                    Console.Clear();
                 }
                 else
                 {
-                    Console.WriteLine("Você errou!");
-                    respostaErrada(adivinhar, ref numeroChutado, ref pontuacao, ref chances);
+                    dicaDoJogo(adivinhar, numeroChutado);
 
+                    if (numeroChutado == adivinhar)
+                    {
+                        classificadorDePontuacao(pontuacao);
+                        replayGame();
+
+                    }
+                    else
+                    {
+                        respostaErrada(adivinhar, ref numeroChutado, ref pontuacao, ref chances);
+
+                    }
                 }
 
             } while (chances != 0);
+        }
+
+        private static void dicaDoJogo(int adivinhar, int numeroChutado)
+        {
+            if (numeroChutado > adivinhar)
+            {
+                Console.WriteLine("O Seu Chute Foi MAIOR que o Número Secreto!\n\n");
+            }
+            else if (numeroChutado < adivinhar)
+            {
+                Console.WriteLine("O Seu Chute Foi MENOR que o Número Secreto!\n\n");
+            }
+        }
+
+        private static void classificadorDePontuacao(int pontuacao)
+        {
+            Console.WriteLine("\t\t\t\tACERTOU!\n\t\t\t\tTU É BRABO MENÓ!");
+            if (pontuacao >= 750)
+            {
+                Console.WriteLine("Você fez uma excelente pontuação!");
+            }
+            else if (pontuacao <= 749 && pontuacao >= 400)
+            {
+                Console.WriteLine("Tá na média... Mas pode melhorar.");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Adm:  COMO???");
+                Console.WriteLine("Adm:  Tenta de novo pelo amor de DEUS!");
+                Console.ForegroundColor = ConsoleColor.White;
+                replayGame();
+            }
         }
 
         private static void replayGame()
@@ -72,7 +116,7 @@ namespace Jogo_De_Adivinhacao_ConsoleApp
 
         static void respostaErrada(int adivinhar, ref int numeroChutado, ref int pontuacao, ref int chances)
         {
-            int calculoErro = Math.Abs((numeroChutado - adivinhar) / 2) * 10;
+            int calculoErro = Math.Abs((numeroChutado - adivinhar) / 2) * 25; //Adicionado para ficar mais interativo com o placar.
             pontuacao -= calculoErro;
             chances--;
             Console.Write($"\tVocê perdeu {calculoErro} pontos.");
@@ -119,7 +163,6 @@ namespace Jogo_De_Adivinhacao_ConsoleApp
             Console.Clear();
         }
 
-        // (numero chutado – numero aleatório) / 2 formula do erro
         static bool continua(string texto)
         {
             Console.WriteLine(texto);
